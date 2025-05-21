@@ -22,7 +22,7 @@ const createStudent = asyncHandler(async (req, res) => {
         throw new Error('Please provide name, student number, phone number, and age');
     }
 
-    // Check if student with the same student number already exists
+    // Check if a student with the same student number already exists
     const studentExists = await Student.findOne({ studentNumber });
 
     if (studentExists) {
@@ -42,7 +42,7 @@ const createStudent = asyncHandler(async (req, res) => {
         if (req.xhr || req.headers.accept.indexOf('json') > -1) {
             res.status(201).json(student);
         } else {
-            // Otherwise redirect back to the students page
+            // Otherwise redirect back to the student's page
             res.redirect('/students');
         }
     } else {

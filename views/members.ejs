@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Member Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 20px;
+            background-color: #f8f9fa;
+        }
+        .member-card {
+            margin-bottom: 15px;
+            transition: transform 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .member-card:hover {
+            transform: translateY(-5px);
+        }
+        .avatar-container {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            border-radius: 4px 4px 0 0;
+        }
+        .avatar-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .page-header {
+            color: #343a40;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .form-card {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="page-header mb-4">Member Management</h1>
+
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <div class="card form-card">
+                <div class="card-header bg-primary text-white">
+                    Add New Member
+                </div>
+                <div class="card-body">
+                    <form action="/members" method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Enter name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="age" class="form-label">Age</label>
+                            <input type="number" class="form-control" id="age" name="age" placeholder="Enter age" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone</label>
+                            <input type="text" class="form-control" id="phone" name="phone" placeholder="Enter phone number" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="avatar" class="form-label">Avatar URL</label>
+                            <input type="text" class="form-control" id="avatar" name="avatar" placeholder="Enter avatar URL" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Member</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="mb-3">Members List</h2>
+    <div class="row">
+        <% if (members && members.length > 0) { %>
+            <% members.forEach(function (member) { %>
+                <div class="col-md-4 mb-4">
+                    <a href="/members/<%= member._id %>" class="text-decoration-none text-dark">
+                    <div class="card member-card">
+                        <div class="avatar-container">
+                            <img src="<%= member.avatar %>" alt="<%= member.name %>'s avatar" class="card-img-top">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title"><%= member.name %></h5>
+                            <div class="card-text">
+                                <p><strong>Age:</strong> <%= member.age %></p>
+                                <p><strong>Email:</strong> <%= member.email %></p>
+                                <p><strong>Phone:</strong> <%= member.phone %></p>
+                            </div>
+                        </div>
+                    </div>
+                    </a>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <div class="col-12">
+                <div class="alert alert-info">No members found.</div>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
