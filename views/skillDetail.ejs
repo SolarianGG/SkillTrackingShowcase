@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title><%= skill.name %> - Skill Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            padding-top: 20px;
+            background-color: #f8f9fa;
+        }
+        .page-header {
+            color: #343a40;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        .card {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .navbar {
+            margin-bottom: 30px;
+        }
+        .progress {
+            height: 15px;
+        }
+        .category-badge {
+            background-color: #6c757d;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+        .proficiency-beginner { background-color: #28a745; }
+        .proficiency-intermediate { background-color: #17a2b8; }
+        .proficiency-advanced { background-color: #fd7e14; }
+        .proficiency-expert { background-color: #dc3545; }
+        .goal-item {
+            background-color: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .resource-card {
+            transition: transform 0.3s;
+        }
+        .resource-card:hover {
+            transform: translateY(-5px);
+        }
+        .resource-type {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+        }
+        .resource-video { color: #dc3545; }
+        .resource-article { color: #17a2b8; }
+        .resource-book { color: #28a745; }
+        .resource-course { color: #fd7e14; }
+        .resource-other { color: #6c757d; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary rounded">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Skill Tracker</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/skills">Skills</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/categories">Categories</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-header mb-0"><%= skill.name %></h1>
+        <div>
+            <a href="/skills" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Skills
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Skill Details -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Skill Information
+                </div>
+                <div class="card-body">
+                    <span class="category-badge"><%= skill.category ? skill.category.name : 'Uncategorized' %></span>
+
+                    <p class="card-text"><%= skill.description || 'No description provided.' %></p>
+
+                    <div class="mb-3">
+                        <strong>Proficiency Level:</strong>
+                        <span class="badge proficiency-<%= skill.proficiencyLevel %>">
+                            <%= skill.proficiencyLevel.charAt(0).toUpperCase() + skill.proficiencyLevel.slice(1) %>
+                        </span>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>Progress:</strong>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: <%= skill.progress %>%;" 
+                                aria-valuenow="<%= skill.progress %>" aria-valuemin="0" aria-valuemax="100">
+                                <%= skill.progress %>%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <strong>Goals:</strong>
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addGoalModal">
+                                <i class="bi bi-plus-circle"></i> Add Goal
+                            </button>
+                        </div>
+                        <% if (skill.goals && skill.goals.length > 0) { %>
+                            <div class="mt-2">
+                                <% skill.goals.forEach(function(goal, index) { %>
+                                    <div class="goal-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <% if (goal.completed) { %>
+                                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                <span style="text-decoration: line-through;"><%= goal.text %></span>
+                                            <% } else { %>
+                                                <i class="bi bi-circle text-secondary me-2"></i>
+                                                <%= goal.text %>
+                                            <% } %>
+                                        </div>
+                                        <form action="/skills/<%= skill._id %>/goals/<%= index %>/toggle" method="POST">
+                                            <button type="submit" class="btn btn-sm <%= goal.completed ? 'btn-outline-secondary' : 'btn-outline-success' %>">
+                                                <%= goal.completed ? 'Mark Incomplete' : 'Complete' %>
+                                            </button>
+                                        </form>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% } else { %>
+                            <p class="text-muted">No goals set for this skill.</p>
+                        <% } %>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>Created:</strong> <%= new Date(skill.createdAt).toLocaleDateString() %>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>Last Updated:</strong> <%= new Date(skill.updatedAt).toLocaleDateString() %>
+                    </div>
+
+                    <div class="d-flex mt-4">
+                        <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#editSkillModal">
+                            <i class="bi bi-pencil"></i> Edit Skill
+                        </button>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteSkillModal">
+                            <i class="bi bi-trash"></i> Delete Skill
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resources Section -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <span>Learning Resources</span>
+                    <button type="button" class="btn btn-sm btn-light" data-bs-toggle="modal" data-bs-target="#addResourceModal">
+                        <i class="bi bi-plus"></i> Add
+                    </button>
+                </div>
+                <div class="card-body">
+                    <% if (skill.resources && skill.resources.length > 0) { %>
+                        <% skill.resources.forEach(function(resource) { %>
+                            <div class="card resource-card mb-3">
+                                <div class="card-body position-relative">
+                                    <% let iconClass = 'resource-other bi bi-link-45deg'; %>
+                                    <% if (resource.type === 'video') { iconClass = 'resource-video bi bi-play-circle-fill'; } %>
+                                    <% if (resource.type === 'article') { iconClass = 'resource-article bi bi-file-text-fill'; } %>
+                                    <% if (resource.type === 'book') { iconClass = 'resource-book bi bi-book-fill'; } %>
+                                    <% if (resource.type === 'course') { iconClass = 'resource-course bi bi-mortarboard-fill'; } %>
+
+                                    <div class="resource-type">
+                                        <i class="<%= iconClass %>"></i>
+                                    </div>
+
+                                    <h5 class="card-title"><%= resource.title %></h5>
+                                    <p class="card-text small text-muted"><%= resource.description || 'No description provided.' %></p>
+
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <a href="<%= resource.url %>" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-box-arrow-up-right"></i> Open
+                                        </a>
+
+                                        <form action="/skills/<%= skill._id %>/resources/<%= resource._id %>/delete" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <div class="alert alert-info">
+                            No learning resources added yet. Add your first resource to help with your learning journey!
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Skill Modal -->
+<div class="modal fade" id="editSkillModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Skill</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/skills/<%= skill._id %>/update" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Skill Name</label>
+                        <input type="text" class="form-control" id="name" name="name" value="<%= skill.name %>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3"><%= skill.description || '' %></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="proficiencyLevel" class="form-label">Proficiency Level</label>
+                        <select class="form-select" id="proficiencyLevel" name="proficiencyLevel">
+                            <option value="beginner" <%= skill.proficiencyLevel === 'beginner' ? 'selected' : '' %>>Beginner</option>
+                            <option value="intermediate" <%= skill.proficiencyLevel === 'intermediate' ? 'selected' : '' %>>Intermediate</option>
+                            <option value="advanced" <%= skill.proficiencyLevel === 'advanced' ? 'selected' : '' %>>Advanced</option>
+                            <option value="expert" <%= skill.proficiencyLevel === 'expert' ? 'selected' : '' %>>Expert</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Progress</label>
+                        <p class="text-muted small">Progress is automatically calculated based on the number of completed goals.</p>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: <%= skill.progress %>%;" 
+                                aria-valuenow="<%= skill.progress %>" aria-valuemin="0" aria-valuemax="100">
+                                <%= skill.progress %>%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Goals</label>
+                        <p class="text-muted small">Goals can be added from the skill detail page using the "Add Goal" button.</p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-select" id="category" name="category" required>
+                            <option value="">Select a category</option>
+                            <% if (categories && categories.length > 0) { %>
+                                <% categories.forEach(function(category) { %>
+                                    <option value="<%= category._id %>" 
+                                        <%= skill.category && skill.category._id.toString() === category._id.toString() ? 'selected' : '' %>>
+                                        <%= category.name %>
+                                    </option>
+                                <% }); %>
+                            <% } %>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Skill Modal -->
+<div class="modal fade" id="deleteSkillModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Skill</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the skill "<%= skill.name %>"?</p>
+                <p class="text-danger">This action cannot be undone. All resources associated with this skill will also be deleted.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form action="/skills/<%= skill._id %>/delete" method="POST">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Goal Modal -->
+<div class="modal fade" id="addGoalModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Goal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/skills/<%= skill._id %>/goals" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="goalText" class="form-label">Goal</label>
+                        <input type="text" class="form-control" id="goalText" name="goalText" placeholder="Enter your goal" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Goal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Resource Modal -->
+<div class="modal fade" id="addResourceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Learning Resource</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/skills/<%= skill._id %>/resources" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" placeholder="Enter resource title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="url" class="form-label">URL</label>
+                        <input type="url" class="form-control" id="url" name="url" placeholder="https://example.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Resource Type</label>
+                        <select class="form-select" id="type" name="type">
+                            <option value="video">Video</option>
+                            <option value="article">Article</option>
+                            <option value="book">Book</option>
+                            <option value="course">Course</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="resourceDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="resourceDescription" name="description" rows="2" placeholder="Brief description of this resource"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Resource</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

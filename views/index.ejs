@@ -5,9 +5,128 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Hi</title>
+    <title>Skill Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #343a40;
+            margin-bottom: 30px;
+        }
+        .nav-links {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        .feature-card {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: left;
+            transition: transform 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #007bff;
+        }
+    </style>
 </head>
 <body>
-    Hello bro
+    <div class="container">
+        <h1>Welcome to Skill Tracker</h1>
+
+        <% if (user) { %>
+            <p class="lead">Welcome, <%= user.login %>! Track your skills and learning progress.</p>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-lightning-charge-fill"></i>
+                        </div>
+                        <h3>Manage Skills</h3>
+                        <p>Track your skills, set goals, and monitor your progress.</p>
+                        <a href="/skills" class="btn btn-primary">Go to Skills</a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-folder-fill"></i>
+                        </div>
+                        <h3>Manage Categories</h3>
+                        <p>Organize your skills into categories for better management.</p>
+                        <a href="/categories" class="btn btn-primary">Go to Categories</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-links mt-5">
+                <a href="/logout" class="btn btn-outline-danger">Logout</a>
+            </div>
+        <% } else { %>
+            <p class="lead">Track your skills, set goals, and monitor your learning progress.</p>
+
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-lightning-charge-fill"></i>
+                        </div>
+                        <h3>Track Skills</h3>
+                        <p>Keep track of all the skills you're learning or want to learn.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-folder-fill"></i>
+                        </div>
+                        <h3>Categorize</h3>
+                        <p>Organize your skills into categories for better management.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-link-45deg"></i>
+                        </div>
+                        <h3>Save Resources</h3>
+                        <p>Attach learning resources like videos, articles, and books.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-links mt-5">
+                <a href="/login" class="btn btn-primary">Login</a>
+                <a href="/register" class="btn btn-success">Register</a>
+            </div>
+        <% } %>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

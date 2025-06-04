@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>User Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .user-info {
+            margin-bottom: 20px;
+        }
+        .user-info p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .user-info strong {
+            display: inline-block;
+            width: 100px;
+        }
+        .skills-section {
+            margin-top: 30px;
+        }
+        .skills-section h2 {
+            color: #333;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .skills-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .skills-list li {
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        .no-skills {
+            font-style: italic;
+            color: #777;
+        }
+        .home-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .home-link a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        .home-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>User Profile</h1>
+
+        <div class="user-info">
+            <p><strong>Login:</strong> <%= user.login %></p>
+            <p><strong>Created:</strong> <%= new Date(user.createdAt).toLocaleString() %></p>
+        </div>
+
+        <div class="skills-section">
+            <h2>Skills</h2>
+            <% if (user.skills && user.skills.length > 0) { %>
+                <ul class="skills-list">
+                    <% user.skills.forEach(skill => { %>
+                        <li><%= skill.name %></li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p class="no-skills">No skills added yet.</p>
+            <% } %>
+        </div>
+
+        <div class="home-link">
+            <p><a href="/">Back to Home</a> | <a href="/logout">Logout</a></p>
+        </div>
+    </div>
+</body>
+</html>
