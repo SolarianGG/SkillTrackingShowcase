@@ -3,9 +3,6 @@ const asyncHandler = require('express-async-handler');
 const Skill = require('../models/skillModel');
 const Category = require('../models/categoryModel');
 
-// @desc    Render skills page
-// @route   GET /skills
-// @access  Private
 const renderSkillsPage = asyncHandler(async (req, res) => {
     const skills = await Skill.find({ user: req.session.user._id })
         .populate('category')
@@ -20,9 +17,6 @@ const renderSkillsPage = asyncHandler(async (req, res) => {
     });
 });
 
-// @desc    Render skill detail page
-// @route   GET /skills/:id
-// @access  Private
 const renderSkillDetailPage = asyncHandler(async (req, res) => {
     const skill = await Skill.findById(req.params.id)
         .populate('category')
@@ -48,9 +42,6 @@ const renderSkillDetailPage = asyncHandler(async (req, res) => {
     });
 });
 
-// @desc    Create a new skill
-// @route   POST /skills
-// @access  Private
 const createSkill = asyncHandler(async (req, res) => {
     const { 
         name, 
@@ -65,12 +56,11 @@ const createSkill = asyncHandler(async (req, res) => {
         throw new Error('Please provide name and category');
     }
 
-    // Create the skill
     const skill = await Skill.create({
         name,
         description,
         proficiencyLevel,
-        goals: [], // Goals will be added individually after creation
+        goals: [],
         category,
         user: req.session.user._id
     });
@@ -83,9 +73,6 @@ const createSkill = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Update a skill
-// @route   POST /skills/:id/update
-// @access  Private
 const updateSkill = asyncHandler(async (req, res) => {
     const { 
         name, 
@@ -133,9 +120,6 @@ const updateSkill = asyncHandler(async (req, res) => {
     res.redirect(`/skills/${skill._id}`);
 });
 
-// @desc    Delete a skill
-// @route   POST /skills/:id/delete
-// @access  Private
 const deleteSkill = asyncHandler(async (req, res) => {
     // Check if the skill exists
     const skill = await Skill.findById(req.params.id);
@@ -156,9 +140,6 @@ const deleteSkill = asyncHandler(async (req, res) => {
     res.redirect('/skills');
 });
 
-// @desc    Add a resource to a skill
-// @route   POST /skills/:id/resources
-// @access  Private
 const addResource = asyncHandler(async (req, res) => {
     const { title, url, type, description } = req.body;
 
@@ -193,9 +174,6 @@ const addResource = asyncHandler(async (req, res) => {
     res.redirect(`/skills/${skill._id}`);
 });
 
-// @desc    Remove a resource from a skill
-// @route   POST /skills/:id/resources/:resourceId/delete
-// @access  Private
 const removeResource = asyncHandler(async (req, res) => {
     // Check if the skill exists
     const skill = await Skill.findById(req.params.id);
@@ -220,9 +198,6 @@ const removeResource = asyncHandler(async (req, res) => {
     res.redirect(`/skills/${skill._id}`);
 });
 
-// @desc    Toggle goal completion status
-// @route   POST /skills/:id/goals/:goalIndex/toggle
-// @access  Private
 const toggleGoalCompletion = asyncHandler(async (req, res) => {
     // Check if the skill exists
     const skill = await Skill.findById(req.params.id);
@@ -261,9 +236,6 @@ const toggleGoalCompletion = asyncHandler(async (req, res) => {
     res.redirect(`/skills/${skill._id}`);
 });
 
-// @desc    Add a single goal to a skill
-// @route   POST /skills/:id/goals
-// @access  Private
 const addGoal = asyncHandler(async (req, res) => {
     const { goalText } = req.body;
 

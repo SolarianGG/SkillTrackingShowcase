@@ -2,20 +2,15 @@ const asyncHandler = require('express-async-handler');
 
 const UserModel = require('../models/userModel');
 
-// @desc    Render login page
-// @route   GET /login
-// @access  Public
+
 const getLoginPage = asyncHandler(async (req, res) => {
-    // If user is already logged in, redirect to home
     if (req.session.user) {
         return res.redirect('/');
     }
     res.render('login');
 });
 
-// @desc    Login to account
-// @route   POST /login
-// @access  Public
+
 const loginToAccount = asyncHandler(async (req, res) => {
     const {login, password} = req.body;
 
@@ -26,14 +21,13 @@ const loginToAccount = asyncHandler(async (req, res) => {
 
     const user = await UserModel.findOne({ login }).lean();
     if (!user) {
-        return res.render('login', { error: 'Неправильный логин' });
+        return res.render('login', { error: 'Incorrect login' });
     }
 
     if (user.password !== password) {
-        return res.render('login', { error: 'Неправильный пароль' });
+        return res.render('login', { error: 'Incorrect password' });
     }
 
-    // Store user in session
     req.session.user = {
         _id: user._id,
         login: user.login,
@@ -44,20 +38,15 @@ const loginToAccount = asyncHandler(async (req, res) => {
     res.redirect('/');
 });
 
-// @desc    Render registration page
-// @route   GET /register
-// @access  Public
+
 const getRegisterPage = asyncHandler(async (req, res) => {
-    // If user is already logged in, redirect to home
     if (req.session.user) {
         return res.redirect('/');
     }
     res.render('register');
 });
 
-// @desc    Register new user
-// @route   POST /register
-// @access  Public
+
 const registerUser = asyncHandler(async (req, res) => {
     const {login, password} = req.body;
 
@@ -65,20 +54,17 @@ const registerUser = asyncHandler(async (req, res) => {
         return res.render('register', { error: 'Please fill in all fields' });
     }
 
-    // Check if user already exists
     const userExists = await UserModel.findOne({ login });
     if (userExists) {
         return res.render('register', { error: 'User already exists' });
     }
 
-    // Create user
     const user = await UserModel.create({
         login,
         password,
     });
 
     if (user) {
-        // Store user in session
         req.session.user = {
             _id: user._id,
             login: user.login,
@@ -92,23 +78,7 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Get user profile
-// @route   GET /profile
-// @access  Private
-const getProfile = asyncHandler(async (req, res) => {
-    const user = await UserModel.findById(req.session.user._id).lean();
 
-    if (!user) {
-        res.status(404);
-        throw new Error('User not found');
-    }
-
-    res.render('user', { user });
-});
-
-// @desc    Logout user
-// @route   GET /logout
-// @access  Private
 const logout = asyncHandler(async (req, res) => {
     req.session.destroy();
     res.redirect('/');
@@ -119,6 +89,5 @@ module.exports = {
     loginToAccount,
     getRegisterPage,
     registerUser,
-    getProfile,
     logout
 };

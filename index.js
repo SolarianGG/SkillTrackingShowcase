@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true })); // For parsing form data
 
 // Session middleware
 app.use(session({
-    secret: 'your-secret-key',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 3600000 } // 1 hour

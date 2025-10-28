@@ -3,9 +3,6 @@ const asyncHandler = require('express-async-handler');
 const Category = require('../models/categoryModel');
 const Skill = require('../models/skillModel');
 
-// @desc    Render categories page
-// @route   GET /categories
-// @access  Private
 const renderCategoriesPage = asyncHandler(async (req, res) => {
     const categories = await Category.find({ user: req.session.user._id }).lean();
     
@@ -15,9 +12,6 @@ const renderCategoriesPage = asyncHandler(async (req, res) => {
     });
 });
 
-// @desc    Create a new category
-// @route   POST /categories
-// @access  Private
 const createCategory = asyncHandler(async (req, res) => {
     const { name, description } = req.body;
     
@@ -26,7 +20,7 @@ const createCategory = asyncHandler(async (req, res) => {
         throw new Error('Please provide a category name');
     }
     
-    // Check if category with the same name already exists for this user
+    // Check if a category with the same name already exists for this user
     const categoryExists = await Category.findOne({ 
         name, 
         user: req.session.user._id 
@@ -52,9 +46,6 @@ const createCategory = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Update a category
-// @route   POST /categories/:id/update
-// @access  Private
 const updateCategory = asyncHandler(async (req, res) => {
     const { name, description } = req.body;
     
@@ -98,9 +89,6 @@ const updateCategory = asyncHandler(async (req, res) => {
     res.redirect('/categories');
 });
 
-// @desc    Delete a category
-// @route   POST /categories/:id/delete
-// @access  Private
 const deleteCategory = asyncHandler(async (req, res) => {
     // Check if the category exists
     const category = await Category.findById(req.params.id);
