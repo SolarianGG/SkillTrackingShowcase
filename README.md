@@ -54,6 +54,10 @@ A web application that helps users track and manage their learning journey by or
 5. Track your progress as you develop each skill
 6. Add learning resources to help you improve
 
+## Showcase
+
+https://www.youtube.com/watch?v=xLvMUTfqKs0
+
 ## API Endpoints
 
 ### Authentication
